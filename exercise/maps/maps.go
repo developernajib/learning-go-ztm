@@ -29,7 +29,52 @@ const (
 	Retired     = 3
 )
 
-func main() {
-	servers := []string{"darkstar", "aiur", "omicron", "w359", "baseline"}
+func displayServerInfo(serverStatus map[string]int) {
+	fmt.Println("\nThere are", len(serverStatus), "servers")
+
+	stats := make(map[int]int)
+
+	for _, status := range serverStatus {
+		switch status {
+		case Online:
+			stats[Online]++
+		case Offline:
+			stats[Offline]++
+		case Maintenance:
+			stats[Maintenance]++
+		case Retired:
+			stats[Retired]++
+		default:
+			panic("Unhandled server status")
+		}
+	}
+
+	fmt.Println(stats[Online], "servers are Online")
+	fmt.Println(stats[Offline], "servers are Offline")
+	fmt.Println(stats[Maintenance], "servers are Maintenance")
+	fmt.Println(stats[Retired], "servers are Retired")
 }
 
+func main() {
+	servers := []string{"darkstar", "aiur", "omicron", "w359", "baseline"}
+
+	serverStatus := make(map[string]int)
+
+	for _, server := range servers {
+		serverStatus[server] = Online
+	}
+	displayServerInfo(serverStatus)
+
+	serverStatus["darkstar"] = Retired
+	serverStatus["aiur"] = Offline
+	displayServerInfo(serverStatus)
+
+	for server := range serverStatus {
+		serverStatus[server] = Maintenance
+	}
+	displayServerInfo(serverStatus)
+
+	// Extra
+	delete(serverStatus, "omicron")
+	displayServerInfo(serverStatus)
+}
