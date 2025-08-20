@@ -18,6 +18,21 @@ import "fmt"
 
 type Part string
 
-func main() {
+func printLine(line []Part) {
+	for i := 0; i < len(line); i++ {
+		element := line[i]
+		fmt.Println(element)
+	}
+	fmt.Printf("Total parts: %d\n\n", len(line))
 }
 
+func main() {
+	line := []Part{"Engine", "Wheel", "Door"}
+	printLine(line)
+
+	line = append(line, "Seat", "Mirror")
+	printLine(line)
+
+	line = line[2:4]
+	printLine(line)
+}
