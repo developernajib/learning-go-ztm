@@ -16,13 +16,39 @@ package main
 
 import "fmt"
 
-func main() {
-	fmt.Println(add.calculate(2, 2)) // = 4
+const (
+	Addition = iota
+	Subtraction
+	Multiplication
+	Division
+)
 
-	fmt.Println(sub.calculate(10, 3)) // = 7
+type Operation int
 
-	fmt.Println(mul.calculate(3, 3)) // = 9
-
-	fmt.Println(div.calculate(100, 2)) // = 50
+func (op Operation) calculate(first, second int) int {
+	switch op {
+	case Addition:
+		return first + second
+	case Subtraction:
+		return first - second
+	case Multiplication:
+		return first * second
+	case Division:
+		return first / second
+	}
+	panic("Unknown operation")
 }
 
+func main() {
+	add := Operation(Addition)
+	fmt.Println(add.calculate(2, 2)) // = 4
+
+	sub := Operation(Subtraction)
+	fmt.Println(sub.calculate(10, 3)) // = 7
+
+	mul := Operation(Multiplication)
+	fmt.Println(mul.calculate(3, 3)) // = 9
+
+	div := Operation(Division)
+	fmt.Println(div.calculate(100, 2)) // = 50
+}
