@@ -21,7 +21,52 @@ package main
 
 import "fmt"
 
-func main() {
-
+type Vehicle interface {
+	GetType() string
 }
 
+type Motorcycle struct{}
+
+func (m Motorcycle) GetType() string {
+	return "Motorcycle"
+}
+
+type Car struct{}
+
+func (c Car) GetType() string {
+	return "Car"
+}
+
+type Truck struct{}
+
+func (t Truck) GetType() string {
+	return "Truck"
+}
+
+func directToLift(v Vehicle) {
+	var lift string
+
+	switch v.GetType() {
+	case "Motorcycle":
+		lift = "Small Lift"
+	case "Car":
+		lift = "Standard Lift"
+	case "Truck":
+		lift = "Large Lift"
+	default:
+		lift = "Unknown Lift"
+	}
+
+	fmt.Printf("Vehicle Type: %s\n", v.GetType())
+	fmt.Printf("Assigned Lift: %s\n\n", lift)
+}
+
+func main() {
+	motorcycle := Motorcycle{}
+	car := Car{}
+	truck := Truck{}
+
+	directToLift(motorcycle)
+	directToLift(car)
+	directToLift(truck)
+}
