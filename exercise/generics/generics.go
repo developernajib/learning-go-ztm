@@ -15,10 +15,18 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"golang.org/x/exp/constraints"
+)
 
 type Distance int32
 type Velocity float64
+
+type Number interface {
+	constraints.Float | constraints.Integer
+}
 
 // The `clamp` function returns a value that has been "clamped"
 // within a specific range of numbers. The `min` value is the
@@ -31,6 +39,16 @@ type Velocity float64
 /*
 func clamp(value, min, max) clamped_value {}
 */
+
+func clamp[T Number](value, min, max T) T {
+	if value < min {
+		return min
+	}
+	if value > max {
+		return max
+	}
+	return value
+}
 
 func testClampInt8() {
 	var (
@@ -90,4 +108,3 @@ func main() {
 	testClampVelocity()
 	fmt.Println("Exercise complete!")
 }
-
