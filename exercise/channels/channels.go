@@ -17,28 +17,60 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
 type Job int
 
+var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+
 func longCalculation(i Job) int {
-	duration := time.Duration(rand.Intn(1000)) * time.Millisecond
+	duration := time.Duration(rng.Intn(1000)) * time.Millisecond
 	time.Sleep(duration)
+
 	fmt.Printf("Job %d complete in %v\n", i, duration)
+
 	return int(i) * 30
 }
 
 func makeJobs() []Job {
-	jobs := make([]Job, 0, 100)
-	for i := 0; i < 100; i++ {
-		jobs = append(jobs, Job(rand.Intn(10000)))
+	jobs := make([]Job, 0, 25)
+
+	for i := 0; i < 25; i++ {
+		jobs = append(jobs, Job(rng.Intn(1000)))
 	}
+
 	return jobs
 }
 
 func main() {
-	rand.New(rand.NewSource(time.Now().UnixNano()))
 	jobs := makeJobs()
-}
 
+	results := make(chan int)
+	var wg sync.WaitGroup
+
+	for _, job := range jobs {
+		wg.Add(1)
+
+		go func(j Job) {
+			defer wg.Done()
+
+			result := longCalculation(j)
+			results <- result
+		}(job)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	total := 0
+
+	for result := range results {
+		total += result
+	}
+
+	fmt.Printf("Sum: %d\n", total)
+}
