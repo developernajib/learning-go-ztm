@@ -19,8 +19,50 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"sync"
+	"unicode"
 )
 
-func main() {}
+func countLetters(word string) int {
+	count := 0
+	for _, r := range word {
+		if unicode.IsLetter(r) {
+			count++
+		}
+	}
+	return count
+}
 
+func main() {
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Split(bufio.ScanWords)
+
+	var wg sync.WaitGroup
+	results := make(chan int)
+
+	for scanner.Scan() {
+		word := scanner.Text()
+
+		wg.Add(1)
+		go func(w string) {
+			defer wg.Done()
+			results <- countLetters(w)
+		}(word)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	total := 0
+
+	for v := range results {
+		total += v
+	}
+
+	fmt.Println(total)
+}
